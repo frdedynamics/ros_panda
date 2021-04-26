@@ -10,6 +10,21 @@
 
 namespace panda_controllers {
 
+double JOINT_POSITION_COMMAND[7];
+ros::Time JOINT_POSITION_COMMAND_STAMP_CURRENT;
+ros::Time JOINT_POSITION_COMMAND_STAMP_PREVIOUS;
+
+void cmdCallback(const ros_panda::JointCommandPosition::ConstPtr& msg){
+
+  JOINT_POSITION_COMMAND_STAMP_CURRENT = ros::Time::now();
+  for (int i=0; i< 7; i++)
+  {
+      JOINT_POSITION_COMMAND[i] = msg->values[i];
+  }
+  JOINT_POSITION_COMMAND_STAMP_PREVIOUS = JOINT_POSITION_COMMAND_STAMP_CURRENT;
+
+}
+
 bool JointPositionController::init(hardware_interface::RobotHW* robot_hardware,
                                           ros::NodeHandle& node_handle) {
   position_joint_interface_ = robot_hardware->get<hardware_interface::PositionJointInterface>();
@@ -44,37 +59,37 @@ bool JointPositionController::init(hardware_interface::RobotHW* robot_hardware,
       ROS_ERROR_STREAM(
           "JointPositionController: Robot is not in the expected starting position for "
           "running this example. Run `roslaunch franka_example_controllers move_to_start.launch "
-          "robot_ip:=<robot-ip> load_gripper:=<has-attached-gripper>` first. Balls, I forgot the this part..");
+          "robot_ip:=<robot-ip> load_gripper:=<has-attached-gripper>` first. Balls, I forgot this part..");
       return false;
     }
   }
+
+  joint_command_position_sub = ros_nh.subscribe("panda_joint_cmd_pos", 1, cmdCallback);
 
   return true;
 }
 
 void JointPositionController::starting(const ros::Time& /* time */) {
+  
   for (size_t i = 0; i < 7; ++i) {
-    initial_pose_[i] = position_joint_handles_[i].getPosition();
+    JOINT_POSITION_COMMAND[i] = position_joint_handles_[i].getPosition();
   }
-  elapsed_time_ = ros::Duration(0.0);
+
 }
 
 void JointPositionController::update(const ros::Time& /*time*/,
                                             const ros::Duration& period) {
   
-  // Sub command
-  // Check command maybe..
-  // Set command
-  elapsed_time_ += period;
+  if (std::abs(position_joint_handles_[i].getPosition() - JOINT_POSITION_COMMAND[i]) > 0.1) {
+      ROS_ERROR_STREAM(
+          "Balls, do stuff here..");
+      return false;
+      }
 
-  double delta_angle = M_PI / 16 * (1 - std::cos(M_PI / 5.0 * elapsed_time_.toSec())) * 0.2;
-  for (size_t i = 0; i < 7; ++i) {
-    if (i == 4) {
-      position_joint_handles_[i].setCommand(initial_pose_[i] - delta_angle);
-    } else {
-      position_joint_handles_[i].setCommand(initial_pose_[i] + delta_angle);
-    }
+  for (size_t i = 0; i < 7; ++i) {   
+    position_joint_handles_[i].setCommand(JOINT_POSITION_COMMAND[i]);
   }
+
 }
 
 }  // namespace panda_controllers

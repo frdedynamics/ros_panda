@@ -10,6 +10,8 @@
 #include <ros/node_handle.h>
 #include <ros/time.h>
 
+#include <ros_panda/JointCommandPosition.h>
+
 namespace panda_controllers {
 
 class JointPositionController : public controller_interface::MultiInterfaceController<
@@ -22,8 +24,10 @@ class JointPositionController : public controller_interface::MultiInterfaceContr
  private:
   hardware_interface::PositionJointInterface* position_joint_interface_;
   std::vector<hardware_interface::JointHandle> position_joint_handles_;
-  ros::Duration elapsed_time_; // replace/remove this
-  std::array<double, 7> initial_pose_{};
+
+  ros::NodeHandle ros_nh;
+  ros::Subscriber joint_command_position_sub;
+  
 };
 
 }  // namespace panda_controllers
