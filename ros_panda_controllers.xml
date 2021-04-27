@@ -1,6 +1,6 @@
-<library path="lib/libros_controllers">
-  <class name="ros_controllers/JointPositionControl"
-         type="ros_controllers::JointPositionControl"
+<library path="lib/libros_panda_controllers">
+  <class name="ros_panda_controllers/JointPositionController"
+         type="ros_panda_controllers::JointPositionController"
          base_class_type="controller_interface::ControllerBase">
     <description>
       Some text to describe what your controller is doing

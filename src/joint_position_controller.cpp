@@ -1,4 +1,4 @@
-#include <mojo_controllers/joint_position_controller.h>
+#include "joint_position_controller.h"
 
 #include <cmath>
 
@@ -8,7 +8,7 @@
 #include <pluginlib/class_list_macros.h>
 #include <ros/ros.h>
 
-namespace panda_controllers {
+namespace ros_panda_controllers {
 
 double JOINT_POSITION_COMMAND[7];
 ros::Time JOINT_POSITION_COMMAND_STAMP_CURRENT;
@@ -80,19 +80,24 @@ void JointPositionController::starting(const ros::Time& /* time */) {
 void JointPositionController::update(const ros::Time& /*time*/,
                                             const ros::Duration& period) {
   
-  if (std::abs(position_joint_handles_[i].getPosition() - JOINT_POSITION_COMMAND[i]) > 0.1) {
-      ROS_ERROR_STREAM(
-          "Balls, do stuff here..");
-      return false;
-      }
+  bool error_detected = false;
+  for (size_t i = 0; i < 7; ++i) {
+    if (std::abs(position_joint_handles_[i].getPosition() - JOINT_POSITION_COMMAND[i]) > 0.1) {
+      error_detected = true;
+        ROS_ERROR_STREAM(
+            "Balls, do stuff here..");
+        }
+  }
 
-  for (size_t i = 0; i < 7; ++i) {   
-    position_joint_handles_[i].setCommand(JOINT_POSITION_COMMAND[i]);
+  if (~error_detected){
+    for (size_t i = 0; i < 7; ++i) {   
+      position_joint_handles_[i].setCommand(JOINT_POSITION_COMMAND[i]);
+    }
   }
 
 }
 
-}  // namespace panda_controllers
+}  // namespace ros_panda_controllers
 
-PLUGINLIB_EXPORT_CLASS(panda_controllers::JointPositionExampleController,
+PLUGINLIB_EXPORT_CLASS(ros_panda_controllers::JointPositionController,
                        controller_interface::ControllerBase)

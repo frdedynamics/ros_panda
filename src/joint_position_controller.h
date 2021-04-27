@@ -12,7 +12,7 @@
 
 #include <ros_panda/JointCommandPosition.h>
 
-namespace panda_controllers {
+namespace ros_panda_controllers {
 
 class JointPositionController : public controller_interface::MultiInterfaceController<
                                            hardware_interface::PositionJointInterface> {
@@ -30,4 +30,4 @@ class JointPositionController : public controller_interface::MultiInterfaceContr
   
 };
 
-}  // namespace panda_controllers
+}  // namespace ros_panda_controllers
