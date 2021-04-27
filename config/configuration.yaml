@@ -1,5 +1,5 @@
 joint_position_controller:
-    type: panda_controllers/JointPositionController
+    type: ros_panda_controllers/JointPositionController
     joint_names:
         - panda_joint1
         - panda_joint2
