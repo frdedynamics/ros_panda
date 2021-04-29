@@ -25,8 +25,10 @@ class JointPositionController : public controller_interface::MultiInterfaceContr
   hardware_interface::PositionJointInterface* position_joint_interface_;
   std::vector<hardware_interface::JointHandle> position_joint_handles_;
 
-  ros::NodeHandle ros_nh;
+  double JOINT_POSITION_COMMAND[7];
+
   ros::Subscriber joint_command_position_sub;
+  void cmdCallback(const ros_panda::JointCommandPosition::ConstPtr& msg);
   
 };
 
